@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Ghhanssen, Hello World"
+title: "Hello World"
 date: 2021-07-17
 ---
 
