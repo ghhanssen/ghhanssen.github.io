@@ -60,8 +60,8 @@ C:>_ # this would be highlighted with royal blue background and white foreground
 > blockquote her
 
 # Tabell
+
 | heading | header | head |
 | --- | --- | --- |
 | content | more content | text |
 | more | more | more |
-
