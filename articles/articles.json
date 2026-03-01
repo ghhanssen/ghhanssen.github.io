@@ -1,0 +1,16 @@
+[
+    {
+        "id": "powershell-intune-automation",
+        "title": "PowerShell Automation for Intune",
+        "subtitle": "Streamline device management with scripts",
+        "description": "Learn how to automate common Intune tasks using PowerShell scripts. This comprehensive guide covers device enrollment, policy deployment, and reporting automation.",
+        "date": "2026.03.01",
+        "tags": [
+            "PowerShell",
+            "Intune",
+            "Automation"
+        ],
+        "folder": "powershell-intune-automation",
+        "featured": true
+    }
+]

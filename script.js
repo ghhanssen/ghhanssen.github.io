@@ -106,3 +106,122 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
 });
+
+document.addEventListener('DOMContentLoaded', function () {
+    // ...existing code...
+
+    // Load articles dynamically
+    loadArticles();
+
+    // ...rest of existing code...
+});
+
+async function loadArticles() {
+    try {
+        const response = await fetch('articles/articles.json');
+        if (!response.ok) {
+            throw new Error('Failed to load articles');
+        }
+
+        const articles = await response.json();
+        displayArticles(articles);
+    } catch (error) {
+        console.error('Error loading articles:', error);
+        displayArticlesError();
+    }
+}
+
+function displayArticles(articles) {
+    const articlesList = document.getElementById('articlesList');
+    if (!articlesList) return;
+
+    // Sort by date (newest first) and take only featured or first 3
+    const featuredArticles = articles
+        .sort((a, b) => new Date(b.date) - new Date(a.date))
+        .filter(article => article.featured)
+        .slice(0, 3);
+
+    if (featuredArticles.length === 0) {
+        articlesList.innerHTML = `
+            <div class="no-articles">
+                <p class="section-sub">No articles published yet.</p>
+                <a href="articles/editor/" class="btn-primary">Write your first article</a>
+            </div>
+        `;
+        return;
+    }
+
+    const articlesHTML = featuredArticles.map((article, index) => `
+        <article class="project-item" data-reveal>
+            <div class="project-number">${String(index + 1).padStart(2, '0')}</div>
+            <div class="project-content">
+                <h3 class="project-title">${article.title}</h3>
+                <p class="project-subtitle">${article.subtitle}</p>
+                <p class="project-description">
+                    <span class="short-text">${truncateText(article.description, 120)}</span>
+                </p>
+                <div class="project-meta">
+                    <span class="project-date">
+                        <i class="fas fa-calendar"></i>
+                        ${formatDate(article.date)}
+                    </span>
+                </div>
+                <div class="project-tags">
+                    ${article.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                </div>
+            </div>
+            <div class="project-action">
+                <a href="articles/${article.folder}/" class="project-link">
+                    Read article <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+        </article>
+    `).join('');
+
+    articlesList.innerHTML = articlesHTML;
+
+    // Re-initialize reveal animations for new content
+    initializeRevealAnimations();
+}
+
+function displayArticlesError() {
+    const articlesList = document.getElementById('articlesList');
+    if (!articlesList) return;
+
+    articlesList.innerHTML = `
+        <div class="error-placeholder">
+            <p class="section-sub">Unable to load articles. Please try again later.</p>
+        </div>
+    `;
+}
+
+function truncateText(text, maxLength) {
+    if (text.length <= maxLength) return text;
+    return text.substring(0, maxLength).trim() + '...';
+}
+
+function formatDate(dateString) {
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString('en-US', options);
+}
+
+function initializeRevealAnimations() {
+    // Re-initialize reveal animations for dynamically loaded content
+    var revealElements = document.querySelectorAll('[data-reveal]:not(.revealed)');
+
+    var revealObserver = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('revealed');
+                revealObserver.unobserve(entry.target);
+            }
+        });
+    }, {
+        threshold: 0.1,
+        rootMargin: '0px 0px -40px 0px'
+    });
+
+    revealElements.forEach(function (el) {
+        revealObserver.observe(el);
+    });
+}
